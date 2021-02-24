@@ -1,5 +1,7 @@
 # Use Supabase
 
+[![NPM](https://nodei.co/npm/use-supabase.png?compact=true)](https://npmjs.org/package/use-supabase)
+
 This is a simple zero dependencies package that gives you access to your Supabase client using a React hook!
 
 ## Initialize Supabase
