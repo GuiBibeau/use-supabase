@@ -1,4 +1,4 @@
-import type { SupabaseClient, AuthChangeEvent } from '@supabase/supabase-js'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import * as React from 'react'
 import type { User } from '@supabase/supabase-js'
 
@@ -7,11 +7,20 @@ type SupabaseContextType = {
   user: User | null
 }
 
-export const SupabaseContext = React.createContext<SupabaseContextType>({
+const SupabaseContext = React.createContext<SupabaseContextType>({
   sb: null,
   user: null,
 })
 
+/**
+ * SupabaseContextProvider is a context provider giving access to the supabase client to child along the React tree
+ *  You should pass to it an authenticated supabase client see https://supabase.io/docs/client/initializing for details
+ * ```typescript
+ * <SupabaseContextProvider client={supabase}>
+ *    <App />
+ * </SupabaseContextProvider>
+ * ```
+ */
 export const SupabaseContextProvider: React.FC<{ client: SupabaseClient }> = ({
   children,
   client,
@@ -40,6 +49,15 @@ export const SupabaseContextProvider: React.FC<{ client: SupabaseClient }> = ({
   )
 }
 
+/**
+ * useSupabase returns the Supabase client
+ * ```typescript
+ * // get full client instance
+ * const supabase = useSupabase();
+ * // or specific members of the SupabaseClient class
+ * const { auth, from } = useSupabase();
+ * ```
+ */
 export const useSupabase = () => {
   const context = React.useContext(SupabaseContext)
 
@@ -49,9 +67,15 @@ export const useSupabase = () => {
     )
   }
 
-  return context.sb
+  return context.sb as SupabaseClient
 }
 
+/**
+ * useUser returns the Supabase user or null if no user is authenticated
+ * ```typescript
+ * const user = useUser();
+ * ```
+ */
 export const useUser = () => {
   const context = React.useContext(SupabaseContext)
 
