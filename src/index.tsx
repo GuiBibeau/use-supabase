@@ -85,3 +85,79 @@ export const useUser = () => {
 
   return context.user
 }
+
+export function useTable(table: string) {
+  const context = React.useContext(SupabaseContext);
+
+
+  if (context === undefined || context === null) {
+    throw new Error('useUser must be used within a SupabaseContext.Provider')
+    return
+  }
+
+  const [data, setData] = React.useState<any[]>([]);
+  const [error, setError] = React.useState<{
+    message: string;
+    details: string;
+    hint: string;
+    code: string;
+  } | null>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  const initialLoad = async () => {
+    const { data: initialData, error: initialError } = await context.sb!
+      .from(table)
+      .select();
+
+    if (initialData) {
+      setData(initialData);
+    }
+
+    if (initialError) {
+      setError(initialError);
+    }
+    setLoading(false);
+  };
+
+  const subscription = async () => {
+    context.sb!
+      .from(table)
+      .on("*", (payload) => {
+        switch (payload.eventType) {
+          case "INSERT":
+            setData((data: any) => [...data, payload.new]);
+            break;
+          case "UPDATE":
+            const indexToUpdate = data.findIndex(
+              (data: { id: number }) =>
+                Number(data.id) === Number(payload.new.id)
+            );
+            setData((data: any) =>
+              Object.assign([], data, { [indexToUpdate]: payload.new })
+            );
+            break;
+          case "DELETE":
+            setData((data: any) => [
+              ...data.filter(
+                (data: { id: number }) =>
+                  Number(data.id) !== Number(payload.old.id)
+              ),
+            ]);
+            break;
+          default:
+            break;
+        }
+      })
+      .subscribe();
+  };
+
+  React.useEffect(() => {
+    initialLoad();
+  }, []);
+
+  React.useEffect(() => {
+    subscription();
+  }, [loading]);
+
+  return { data, error, loading };
+}
