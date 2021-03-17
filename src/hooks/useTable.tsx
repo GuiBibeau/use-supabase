@@ -1,11 +1,13 @@
 import * as React from 'react'
 import type { TableDispatch } from '../types'
+import type { RealtimeSubscription } from '@supabase/supabase-js'
 import { TableActionType } from '../types'
 import { SupabaseContext, TablesDispatchContext } from '../context'
 
 export function useTable(table: string) {
   const { fetchedTables, sb } = React.useContext(SupabaseContext)
   const dispatch: TableDispatch = React.useContext(TablesDispatchContext)
+  const [realtimeSub, setRealtimeSub] = React.useState<RealtimeSubscription>()
 
   const [error, setError] = React.useState<{
     message: string
@@ -42,7 +44,7 @@ export function useTable(table: string) {
   }
 
   const subscription = async () => {
-    sb!
+    const sub = await sb!
       .from(table)
       .on('*', (payload) => {
         switch (payload.eventType) {
@@ -72,6 +74,7 @@ export function useTable(table: string) {
         }
       })
       .subscribe()
+    setRealtimeSub(sub)
   }
 
   React.useEffect(() => {
@@ -80,6 +83,9 @@ export function useTable(table: string) {
 
   React.useEffect(() => {
     subscription()
+    return () => {
+      realtimeSub?.unsubscribe()
+    }
   }, [loading])
 
   return { data: fetchedTables[table], error }
