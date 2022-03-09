@@ -1,3 +1,5 @@
 export * from './useSupabase'
 export * from './useTable'
 export * from './useUser'
+export * from './useQuery'
+export * from './useMutation'
