@@ -61,8 +61,8 @@ There are a series of hooks that are made available and usable at your convenien
 
 `useSupabase` is the most simple hook in this library. It returns the supabase js client from the context.
 
-```
-  const { auth, from } = useSupabase()
+```tsx
+const { auth, from } = useSupabase()
 ```
 
 ### `useTable`
@@ -71,7 +71,7 @@ There are a series of hooks that are made available and usable at your convenien
 
 `useTable` implements a stale while revalidate strategy. It is a convenient hook to quickly get all information from a table and revalidating the data with the best web performance principles. It will default to getting all the columns on a table but you can pass a select object to specify more details in the query.
 
-```
+```tsx
 const { data } = useTable('users', '*')
 ```
 
@@ -81,7 +81,7 @@ const { data } = useTable('users', '*')
 
 `useQuery` gives you the same SWR capacities as `useTable` but gives you complete granular control on the query you pass.
 
-```
+```tsx
 const query = useSupabase().from('users').select('*').eq(...)
 const { data } = useQuery(query)
 ```
