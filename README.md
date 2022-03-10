@@ -2,7 +2,21 @@
 
 [![NPM](https://nodei.co/npm/use-supabase.png?compact=true)](https://npmjs.org/package/use-supabase)
 
-This is a simple zero dependencies package that gives you access to your Supabase client using a React hook!
+A simple package to boost your supabase consumer app.
+
+```
+  // get automatic SWR revalidation on a whole table or a specific column in it
+  const { data: siteData } = useTable("site", "*");
+  const { data: siteIdData } = useTable("site", "site_id");
+
+  // grab the client to doing anything you want.
+  const client = useSupabase();
+
+  // create a query and use all the postgres query options
+  const query = useSupabase().from("site").select("*");
+  // pass that query to useQuery and get automatic SWR revalidation on it.
+  const { data: queryData } = useQuery(query);
+```
 
 ## Initialize Supabase
 
