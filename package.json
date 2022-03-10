@@ -16,6 +16,7 @@
     "start": "rollup -c -w"
   },
   "dependencies": {
+    "swr": "^1.2.2"
   },
   "peerDependencies": {
     "react": ">= 16.8.0",

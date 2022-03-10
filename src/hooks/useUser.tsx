@@ -2,7 +2,7 @@ import * as React from 'react'
 import { SupabaseContext } from '../context'
 
 /**
- * useUser returns the Supabase user or null if no user is authenticated
+ * @deprecated This is still usable but you should use https://github.com/supabase-community/supabase-auth-helpers
  * ```typescript
  * const user = useUser();
  * ```

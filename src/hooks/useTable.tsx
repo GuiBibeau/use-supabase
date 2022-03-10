@@ -1,92 +1,46 @@
 import * as React from 'react'
-import type { TableDispatch } from '../types'
-import type { RealtimeSubscription } from '@supabase/supabase-js'
-import { TableActionType } from '../types'
-import { SupabaseContext, TablesDispatchContext } from '../context'
+import useSwr from 'swr'
+import { SupabaseContext } from '../context'
+import { SelectArg } from '../types'
 
-export function useTable(table: string) {
-  const { fetchedTables, sb } = React.useContext(SupabaseContext)
-  const dispatch: TableDispatch = React.useContext(TablesDispatchContext)
-  const [realtimeSub, setRealtimeSub] = React.useState<RealtimeSubscription>()
+/**
+ * A hook that implements a SWR strategy to fetch data from a Supabase table
+ * @param from - The table to query
+ * @param select - The fields to select. Can be either a string that defaults to '*' or an object with the following properties:
+ * - str: The field to select
+ * - head: If true, only the first row will be returned
+ * - count: If set to 'exact', only the exact number of rows will be returned. If set to 'planned', the number of rows will be estimated. If set to 'estimated', the number of rows will be estimated.
+ * @returns a swr hook object with the following properties:
+ * - data: The data returned by the query
+ * - error: The error returned by the query
+ * - isValidating: If true, the query is still running
+ * * ```typescript
+ *  const { data, error } = useTable('users', '*')
+ * ```
+ */
+export function useTable<T>(from: string, select: SelectArg = '*') {
+  const context = React.useContext(SupabaseContext)
 
-  const [error, setError] = React.useState<{
-    message: string
-    details: string
-    hint: string
-    code: string
-  } | null>(null)
-
-  const [loading, setLoading] = React.useState(
-    !fetchedTables.hasOwnProperty(table)
-  )
-
-  const initialLoad = async () => {
-    if (fetchedTables.hasOwnProperty(table)) {
-      return
-    }
-
-    const { data: initialData, error: initialError } = await sb!
-      .from(table)
-      .select()
-
-    if (initialData) {
-      dispatch({
-        type: TableActionType.FETCH_NEW_TABLE,
-        data: initialData,
-        tableName: table,
-      })
-    }
-
-    if (initialError) {
-      setError(initialError)
-    }
-    setLoading(false)
+  if (context === undefined) {
+    throw new Error('useUser must be used within a SupabaseContext.Provider')
   }
 
-  const subscription = async () => {
-    const sub = await sb!
-      .from(table)
-      .on('*', (payload) => {
-        switch (payload.eventType) {
-          case 'INSERT':
-            dispatch({
-              type: TableActionType.INSERT,
-              data: payload.new,
-              tableName: table,
-            })
-            break
-          case 'UPDATE':
-            dispatch({
-              type: TableActionType.UPDATE,
-              data: payload.new,
-              tableName: table,
-            })
-            break
-          case 'DELETE':
-            dispatch({
-              type: TableActionType.DELETE,
-              data: payload.old,
-              tableName: table,
-            })
-            break
-          default:
-            break
-        }
-      })
-      .subscribe()
-    setRealtimeSub(sub)
-  }
+  const selectStr = typeof select === 'string' ? select : select.str
+  const selectOptions =
+    typeof select === 'string'
+      ? undefined
+      : { head: select.head, count: select.count }
 
-  React.useEffect(() => {
-    initialLoad()
-  }, [])
+  return useSwr<T>(`${from}${selectStr}`, async (_key: string) => {
+    //@ts-ignore
+    const { data, error } = await context.sb
+      ?.from(from)
+      .select(selectStr, selectOptions)
 
-  React.useEffect(() => {
-    subscription()
-    return () => {
-      realtimeSub?.unsubscribe()
+    if (error) {
+      return error
     }
-  }, [loading])
 
-  return { data: fetchedTables[table], error }
+    return data
+  })
 }
