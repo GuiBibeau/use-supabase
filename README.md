@@ -37,26 +37,43 @@ reportWebVitals()
 
 If you are using Next.js create a custom \_app.tsx like [explained here](https://nextjs.org/docs/advanced-features/custom-app).
 
-## using the hooks
+## Hooks
 
-The context will make avaialble to the hooks the client and the user so that you can use it anywhere along the react component tree.
+There are a series of hooks that are made available and usable at your convenience.
 
-```tsx
-import { useSupabase, useUser } from 'use-supabase'
+### `useSupabase`
 
-const exampleComponent = () => {
+---
+
+`useSupabase` is the most simple hook in this library. It returns the supabase js client from the context.
+
+```
   const { auth, from } = useSupabase()
-  const user = useUser()
-
-  if (user) {
-    return <h1>Hello {user.email}</h1>
-  }
-
-  return <button>register</button>
-}
 ```
 
-## Future features (reach out for suggestions or submit a PR)
+### `useTable`
 
-- [] ability to connect directly to the postgres instance directly
-- [] converters to use with 'from' to have strongly typed data
+---
+
+`useTable` implements a stale while revalidate strategy. It is a convenient hook to quickly get all information from a table and revalidating the data with the best web performance principles. It will default to getting all the columns on a table but you can pass a select object to specify more details in the query.
+
+```
+const { data } = useTable('users', '*')
+```
+
+### `useQuery`
+
+---
+
+`useQuery` gives you the same SWR capacities as `useTable` but gives you complete granular control on the query you pass.
+
+```
+const query = useSupabase().from('users').select('*').eq(...)
+const { data } = useQuery(query)
+```
+
+### `useUser` (deprecated)
+
+`useUser` gives you access to the supabase client user. While it works in all React applications. If you are using a metaframework like Next.js or Remix, you might prefer to use the [supabbase auth helpers](https://github.com/supabase-community/supabase-auth-helpers).
+
+The context will make avaialble to the hooks the client and the user so that you can use it anywhere along the react component tree.
