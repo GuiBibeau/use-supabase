@@ -4,18 +4,18 @@
 
 A simple package to boost your supabase consumer app.
 
-```
-  // get automatic SWR revalidation on a whole table or a specific column in it
-  const { data: siteData } = useTable("site", "*");
-  const { data: siteIdData } = useTable("site", "site_id");
+```tsx
+// get automatic SWR revalidation on a whole table or a specific column in it
+const { data: siteData } = useTable('site', '*')
+const { data: siteIdData } = useTable('site', 'site_id')
 
-  // grab the client to doing anything you want.
-  const client = useSupabase();
+// grab the client to doing anything you want.
+const client = useSupabase()
 
-  // create a query and use all the postgres query options
-  const query = useSupabase().from("site").select("*");
-  // pass that query to useQuery and get automatic SWR revalidation on it.
-  const { data: queryData } = useQuery(query);
+// create a query and use all the postgres query options
+const query = useSupabase().from('site').select('*')
+// pass that query to useQuery and get automatic SWR revalidation on it.
+const { data: queryData } = useQuery(query)
 ```
 
 ## Initialize Supabase
