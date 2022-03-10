@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import type { Response } from '../types'
+import { PostgrestBuilder } from '@supabase/postgrest-js'
 
-export const useQuery = (query: any) => {
-  const [queryState, setQueryState] = useState<Response>({
+export const useQuery = <T,>(query: PostgrestBuilder<T>) => {
+  const [queryState, setQueryState] = useState<Response<T>>({
     data: null,
     loading: true,
     error: null,
@@ -13,15 +14,14 @@ export const useQuery = (query: any) => {
       try {
         const { data, error } = await query
         if (error) throw new Error(`Error ${error.code}: ${error.message}`)
-        setQueryState((prev: Response) => ({
-          ...prev,
-          data,
-          loading: false,
-          error: null,
-        }))
+        setQueryState((prev) =>
+          prev !== null
+            ? { ...prev, data, loading: false, error: null }
+            : { data, loading: false, error: null }
+        )
       } catch (error) {
         if (error instanceof Error) {
-          setQueryState((prev: Response) => ({
+          setQueryState((prev) => ({
             ...prev,
             data: null,
             loading: false,

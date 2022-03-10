@@ -12,8 +12,8 @@ export type TableAction = {
   data: any
 }
 
-export type Response = {
-  data: any
+export type Response<T> = {
+  data: T[] | null
   loading: boolean
   error: Error | null
 }
