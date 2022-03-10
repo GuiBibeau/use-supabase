@@ -56,6 +56,33 @@ const exampleComponent = () => {
 }
 ```
 
+## Hooks for Database : useQuery and useMutation
+
+No need to write loading and error state again and again, juste use this.
+
+Example for queries :
+
+```ts
+const { data, loading, error } = useQuery(
+  supabase.from('profiles').select('*').eq('id', yourUserId)
+)
+```
+
+Example for mutations (insert / update / delete) :
+
+```ts
+const { execute, data, loading, error } = useMutation()
+
+// DO SOMETHING...
+
+// ... and use the execute when needed
+const updateProfile = async ({ fieldToUpdate }: { fieldToUpdate: string }) => {
+  await execute(
+    supabase.from('profiles').update({ fieldToUpdate }).eq('id', yourUserId)
+  )
+}
+```
+
 ## Future features (reach out for suggestions or submit a PR)
 
 - [] ability to connect directly to the postgres instance directly

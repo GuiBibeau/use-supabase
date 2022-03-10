@@ -12,6 +12,12 @@ export type TableAction = {
   data: any
 }
 
+export type Response = {
+  data: any
+  loading: boolean
+  error: Error | null
+}
+
 export type TableDispatch = (_action: TableAction) => void
 
 export type TableState = Record<string, any[]>
