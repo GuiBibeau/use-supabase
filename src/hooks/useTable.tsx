@@ -38,7 +38,7 @@ export function useTable<T>(from: string, select: SelectArg = '*') {
       .select(selectStr, selectOptions)
 
     if (error) {
-      return error
+      throw error
     }
 
     return data
