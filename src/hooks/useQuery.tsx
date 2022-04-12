@@ -23,7 +23,7 @@ export function useQuery<T>(query: PostgrestBuilder<T>) {
     const { data, error } = await query
 
     if (error) {
-      return error
+      throw error
     }
 
     return data
