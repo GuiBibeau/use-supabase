@@ -29,5 +29,5 @@ export function useQuery<T>(query: PostgrestBuilder<T>) {
     return data
   }
   //@ts-ignore`
-  return useSwr<T>(query.url.href, fetcher)
+  return useSwr<T>(query?.url?.href, fetcher)
 }
