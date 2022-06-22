@@ -31,6 +31,7 @@ export function useQuery<T>(query: PostgrestBuilder<T>, config: SWRConfiguration
 
     return data
   }
-  //@ts-ignore`
-  return useSwr<T>(JSON.stringify(query), fetcher, config)
+  
+  //@ts-ignore
+  return useSwr<T>(query?.url?.href, fetcher)
 }
