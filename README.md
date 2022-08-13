@@ -22,7 +22,7 @@ const { data: queryData } = useQuery(query)
 
 To get access to the hooks first pass use the SupabaseContextProvider at the root of your app.
 
-#### Creat-React-App
+#### Create-React-App
 
 ```tsx
 import React from 'react'
