@@ -88,6 +88,6 @@ const { data } = useQuery(query)
 
 ### `useUser` (deprecated)
 
-`useUser` gives you access to the supabase client user. While it works in all React applications. If you are using a metaframework like Next.js or Remix, you might prefer to use the [supabbase auth helpers](https://github.com/supabase-community/supabase-auth-helpers).
+`useUser` gives you access to the supabase client user. While it works in all React applications. If you are using a metaframework like Next.js or Remix, you might prefer to use the [supabase auth helpers](https://github.com/supabase-community/supabase-auth-helpers).
 
 The context will make avaialble to the hooks the client and the user so that you can use it anywhere along the react component tree.
